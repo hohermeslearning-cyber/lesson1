@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>創意繪畫小達人班｜Johnny Education Centre</title>
+<meta name="description" content="小朋友拾起畫筆，讓孩子創作圖畫、簡報及小故事，提升創意與表達能力。">
+<style>
+:root{
+  --ink:#1f2937; --muted:#5b6b7f; --soft:#8aa0b8;
+  --bg:#fffdf9; --panel:#ffffff; --line:#e4ecf5;
+  --brand:#2563eb; --c:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.75;font-size:15.5px}
+img{max-width:100%}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+/* header */
+header{position:sticky;top:0;z-index:50;background:rgba(255,253,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex:none}
+.brand .name{font-weight:700;font-size:15px;line-height:1.2}
+.brand .name small{display:block;font-weight:500;font-size:10.5px;color:var(--muted)}
+.nav a.home{font-size:14px;font-weight:600;background:#fff;border:1px solid var(--line);padding:8px 14px;border-radius:9px}
+.nav a.home:hover{border-color:var(--brand);color:var(--brand)}
+
+/* hero */
+.hero{background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),var(--bg));border-bottom:1px solid var(--line)}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:center;padding:40px 20px}
+.hero h1{font-size:32px;font-weight:800;line-height:1.3;margin:14px 0 10px}
+.hero .kicker{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--c)}
+.hero p{color:var(--muted);margin-bottom:20px}
+.heroimg{border-radius:18px;border:2px solid color-mix(in srgb,var(--c) 30%,#fff);box-shadow:0 12px 30px rgba(37,99,235,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 16px;font-size:14px;font-weight:600}
+.chip .em{font-size:18px}
+.chip b{color:var(--c)}
+.chip small{display:block;font-size:11px;color:var(--soft);font-weight:500}
+@media (max-width:760px){.hero .wrap{grid-template-columns:1fr;padding:28px 20px}.hero h1{font-size:26px}.heroimg{order:-1}}
+
+/* sections */
+section{padding:44px 0}
+section+section{border-top:1px solid var(--line)}
+h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.sub{color:var(--muted);margin-bottom:20px}
+.outline{list-style:none;display:grid;gap:12px}
+.outline li{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 18px;font-size:14.5px;display:flex;gap:12px;align-items:flex-start}
+.outline li .n{width:30px;height:30px;border-radius:50%;background:color-mix(in srgb,var(--c) 15%,#fff);color:var(--c);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+.note{background:color-mix(in srgb,var(--c) 8%,#fff);border:1.5px dashed color-mix(in srgb,var(--c) 45%,#fff);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--muted)}
+
+/* cta */
+.cta{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 16%,#fff),#fff);text-align:center;border-top:1px solid var(--line)}
+.cta .price{font-size:34px;font-weight:800;color:var(--c);margin-bottom:4px}
+.cta .price small{font-size:15px;color:var(--soft);font-weight:600}
+.cta p{color:var(--muted);margin-bottom:18px;max-width:520px;margin-left:auto;margin-right:auto}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none}
+.btn.primary{background:var(--c);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);text-decoration:none}
+.btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--c);color:var(--c);text-decoration:none}
+.cta .small{font-size:12.5px;color:var(--soft);margin-top:14px}
+
+/* footer */
+footer{background:#101a2c;color:#9fb0c7;padding:30px 0 24px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer h4{color:#e5ecf5;font-size:14px;margin-bottom:10px}
+footer li{list-style:none;font-size:13px;margin-bottom:7px}
+footer a{color:#9fb0c7}
+footer a:hover{color:#fff}
+footer .copy{width:100%;border-top:1px solid #22324a;margin-top:20px;padding-top:14px;font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+@media print{header,.btns,footer nav{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html">
+      <span class="logo" aria-hidden="true">J</span>
+      <span class="name">Johnny Education Centre<small>5至9歲小學生私人教育中心</small></span>
+    </a>
+    <a class="home" href="../index.html">← 返回首頁</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker">COURSE</span>
+      <h1>🎨 創意繪畫小達人班</h1>
+      <p>小朋友拾起畫筆，讓孩子創作圖畫、簡報及小故事，提升創意與表達能力。</p>
+      <div class="chips">
+        <span class="chip"><span class="em">🧒</span><span>適合年齡<small>5至9歲（本中心對象）</small></span></span>
+        <span class="chip"><span class="em">⏰</span><span>上堂時數<small>4堂 / 期</small></span></span>
+        <span class="chip"><span class="em">💰</span><span>收費<b>HKD 1,200</b><small>/ 4堂</small></span></span>
+      </div>
+    </div>
+    <img class="heroimg" src="images/art.jpg" alt="創意繪畫小達人班課程場景插畫" width="1280" height="853">
+  </div>
+</div>
+
+<section aria-labelledby="out-h">
+  <div class="wrap">
+    <h2 id="out-h">課程重點</h2>
+    <p class="sub">本課程涵蓋以下內容（依課程說明）：</p>
+    <ul class="outline">
+      <li><span class="n" aria-hidden="true">1</span>創作圖畫</li>
+      <li><span class="n" aria-hidden="true">2</span>創作簡報</li>
+      <li><span class="n" aria-hidden="true">3</span>創作小故事</li>
+      <li><span class="n" aria-hidden="true">4</span>提升創意</li>
+      <li><span class="n" aria-hidden="true">5</span>提升表達能力</li>
+    </ul>
+    <div class="note" style="margin-top:18px">📋 詳細逐堂課程大綱（每一堂時數安排）現階段尚未提供，將於報名時由教學團隊一併說明，以正式課程說明為準。</div>
+  </div>
+</section>
+
+<section class="cta" aria-label="報名">
+  <div class="wrap">
+    <div class="price">HKD 1,200 <small>/ 4堂</small></div>
+    <p>歡迎垂詢課程詳情或預約報名。我們重視耐心與鼓勵，讓每位孩子都能安心學習。</p>
+    <div class="btns">
+      <a class="btn primary" href="https://wa.me/85212345678?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E6%9F%A5%E8%A9%A2%EF%BC%8F%E5%A0%B1%E5%90%8D%E3%80%8C%E5%89%B5%E6%84%8F%E7%B9%AA%E7%95%AB%E5%B0%8F%E9%81%94%E4%BA%BA%E7%8F%AD%E3%80%8D%E8%AA%B2%E7%A8%8B%E3%80%82">💬 WhatsApp 報名 / 查詢</a>
+      <a class="btn ghost" href="tel:+85212345678">📞 +852 1234 5678</a>
+      <a class="btn ghost" href="mailto:info@johnnyedu.hk?subject=%E6%9F%A5%E8%A9%A2%EF%BC%8F%E5%A0%B1%E5%90%8D%EF%BC%9A%E5%89%B5%E6%84%8F%E7%B9%AA%E7%95%AB%E5%B0%8F%E9%81%94%E4%BA%BA%E7%8F%AD">✉️ info@johnnyedu.hk</a>
+    </div>
+    <div class="small">中心地址：九龍長沙灣貿易廣場5樓599號｜營業時間：星期一至五 14:00–19:30、星期六 10:00–18:00</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>導覽</h4>
+      <ul>
+        <li><a href="../index.html#about">公司簡介</a></li>
+        <li><a href="../index.html#philosophy">教學理念</a></li>
+        <li><a href="../index.html#courses">精選課程</a></li>
+        <li><a href="../index.html#teachers">師資介紹</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>聯絡</h4>
+      <ul>
+        <li>九龍長沙灣貿易廣場5樓599號</li>
+        <li><a href="tel:+85212345678">+852 1234 5678</a></li>
+        <li><a href="mailto:info@johnnyedu.hk">info@johnnyedu.hk</a></li>
+        <li><a href="https://www.johnnyedu.hk" rel="noopener">www.johnnyedu.hk</a></li>
+      </ul>
+    </div>
+    <div class="copy">
+      <span>© 2026 Johnny Education Centre</span>
+      <span>星期一至五 14:00–19:30｜星期六 10:00–18:00｜星期日及公眾假期休息</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
