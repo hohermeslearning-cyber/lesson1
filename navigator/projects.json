@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Todo List",
+    "category": "生產力工具",
+    "desc": "簡潔實用的待辦事項網頁應用，開啟即用作。支援新增、標記完成與刪除，資料儲存於瀏覽器本地。",
+    "tech": ["HTML", "CSS", "JavaScript"],
+    "status": "已上線",
+    "link": "https://hohermeslearning-cyber.github.io/lesson1/"
+  },
+  {
+    "name": "銷售資料儀表板",
+    "category": "數據可視化",
+    "desc": "以單一 HTML 檔案製作的互動式儀表板，展示 KPI、趨勢圖表、篩選器與可排序明細表。目前僅在本地，尚未部署。",
+    "tech": ["HTML", "CSS", "JavaScript"],
+    "status": "開發中"
+  }
+]

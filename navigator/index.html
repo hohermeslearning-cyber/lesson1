@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web App 導覽站</title>
+<style>
+:root{
+  --bg:#0e1420; --panel:#151e2c; --panel2:#1a2434; --line:#263245;
+  --ink:#e9eef6; --muted:#95a3b8; --faint:#6b7a90;
+  --blue:#3b82f6; --teal:#2dd4bf; --amber:#f59e0b; --green:#34d399; --rose:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 18px 60px}
+header{margin-bottom:8px}
+h1{font-size:30px;font-weight:700;letter-spacing:.5px}
+.sub{color:var(--muted);font-size:14px;margin-top:6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 18px}
+input[type=text]{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:9px 14px;border-radius:9px;font-size:14px;font-family:inherit;flex:1;min-width:220px}
+input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:9px 15px;border-radius:9px;font-size:13.5px;cursor:pointer;font-family:inherit}
+.btn:hover{border-color:var(--blue);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:6px 13px;border-radius:20px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.chip:hover{border-color:var(--blue)}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.count{color:var(--faint);font-size:13px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);border-color:var(--blue)}
+.cardtop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card h2{font-size:17px;font-weight:700}
+.cat{font-size:11px;color:var(--faint);margin-top:3px}
+.badge{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap}
+.badge.live{background:rgba(52,211,153,.15);color:#6ee7b7;border:1px solid rgba(52,211,153,.35)}
+.badge.dev{background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
+.badge.other{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.desc{color:var(--muted);font-size:13.5px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:var(--panel2);border:1px solid var(--line);color:var(--teal);font-size:11.5px;padding:2px 9px;border-radius:6px;font-weight:600}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+.openbtn{display:inline-flex;align-items:center;gap:6px;background:var(--blue);border:1px solid var(--blue);color:#fff;padding:7px 14px;border-radius:8px;font-size:13px;text-decoration:none;font-weight:600}
+.openbtn:hover{filter:brightness(1.1)}
+.openbtn.ghost{background:transparent;border-color:var(--line);color:var(--faint);pointer-events:none;font-weight:400}
+.empty{text-align:center;color:var(--faint);padding:50px 0;font-size:14.5px}
+.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);color:#fca5a5;border-radius:10px;padding:14px 16px;font-size:13.5px;margin:20px 0}
+footer{margin-top:46px;padding-top:16px;border-top:1px solid var(--line);color:var(--faint);font-size:12px}
+code{font-family:ui-monospace,monospace;font-size:11.5px;background:var(--panel2);padding:1px 6px;border-radius:4px;color:#bcd}
+@media (max-width:560px){h1{font-size:24px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Web App 導覽站</h1>
+    <div class="sub">所有網頁應用專案一覽｜ 新增專案只需編輯 <code>projects.json</code></div>
+  </header>
+
+  <div class="err" id="err" hidden>載入專案資料失敗：請確認 <code>projects.json</code> 存在且為有效 JSON。</div>
+  <div id="main">
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="搜尋專案名稱、簡介、技術…" aria-label="搜尋專案">
+      <button class="btn" id="resetBtn">重設</button>
+    </div>
+    <div class="chips" id="chips" role="tablist" aria-label="分類篩選"></div>
+    <div class="chips" id="statusChips" aria-label="狀態篩選"></div>
+    <div class="count" id="count"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden>找不到符合條件的專案。</div>
+  </div>
+
+  <footer>
+    資料來源：<code>projects.json</code>（於此檔案內新增／修改專案）｜ 由 GitHub Pages 自動部署
+  </footer>
+</div>
+<script>
+let PROJECTS = [];
+let q = "", cat = "", status = "";
+
+function esc(s){ const d = document.createElement("i"); d.textContent = String(s); return d.innerHTML; }
+
+function renderChips(){
+  const cats = ["全部", ...new Set(PROJECTS.map(p => p.category).filter(Boolean))];
+  const stat = ["全部", ...new Set(PROJECTS.map(p => p.status).filter(Boolean))];
+  document.getElementById("chips").innerHTML = cats.map(c =>
+    `<button class="chip ${c===cat?"on":""}" role="tab" aria-selected="${c===cat}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+  document.getElementById("statusChips").innerHTML = stat.map(s =>
+    `<button class="chip ${s===status?"on":""}" data-st="${esc(s)}">${s==="全部"?"全部狀態":esc(s)}</button>`).join("");
+  document.querySelectorAll("#chips .chip").forEach(b => b.onclick = () => { cat = b.dataset.cat === "全部" ? "" : b.dataset.cat; render(); });
+  document.querySelectorAll("#statusChips .chip").forEach(b => b.onclick = () => { status = b.dataset.st === "全部" ? "" : b.dataset.st; render(); });
+}
+
+function badgeClass(st){
+  if(st === "已上線") return "live";
+  if(st === "開發中") return "dev";
+  return "other";
+}
+
+function render(){
+  renderChips();
+  const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const list = PROJECTS.filter(p =>
+    (!cat || p.category === cat) &&
+    (!status || p.status === status) &&
+    (!terms.length || terms.every(t =>
+      [p.name, p.desc, p.category, p.status, ...(p.tech||[])]
+        .filter(Boolean).join(" ").toLowerCase().includes(t)))
+  );
+  document.getElementById("count").textContent = `顯示 ${list.length} / ${PROJECTS.length} 個專案`;
+  document.getElementById("empty").hidden = list.length > 0;
+  document.getElementById("grid").innerHTML = list.map(p => `
+    <article class="card">
+      <div class="cardtop">
+        <div><h2>${esc(p.name||"（未命名）")}</h2><div class="cat">${esc(p.category||"未分類")}</div></div>
+        <span class="badge ${badgeClass(p.status)}">${esc(p.status||"未知")}</span>
+      </div>
+      <p class="desc">${esc(p.desc||"（暫無簡介）")}</p>
+      ${p.tech && p.tech.length ? `<div class="tags">${p.tech.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>` : ""}
+      <div class="cardfoot">
+        ${p.link
+          ? `<a class="openbtn" href="${esc(p.link)}" target="_blank" rel="noopener">開啟專案 ↗</a>`
+          : `<span class="openbtn ghost">尚未部署</span>`}
+      </div>
+    </article>`).join("");
+}
+
+async function init(){
+  try {
+    const r = await fetch("projects.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    PROJECTS = await r.json();
+    if (!Array.isArray(PROJECTS)) throw new Error("not array");
+    document.getElementById("search").addEventListener("input", e => { q = e.target.value; render(); });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      q = ""; cat = ""; status = "";
+      document.getElementById("search").value = "";
+      render();
+    });
+    render();
+  } catch(e){
+    document.getElementById("err").hidden = false;
+    document.getElementById("main").hidden = true;
+  }
+}
+init();
+</script>
+</body>
+</html>
