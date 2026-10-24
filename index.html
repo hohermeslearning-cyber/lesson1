@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasks · 今日待辦</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #171a23;
+    --surface-2: #1e2230;
+    --border: #2a2f3d;
+    --text: #e8eaf2;
+    --text-dim: #8b91a3;
+    --accent: #6366f1;
+    --accent-2: #818cf8;
+    --accent-soft: rgba(99,102,241,.15);
+    --danger: #f87171;
+    --done: #34d399;
+    --radius: 14px;
+    --shadow: 0 10px 40px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "PingFang HK", "Microsoft JhengHei", Roboto, sans-serif;
+    background: radial-gradient(1200px 800px at 80% -10%, #1a1f35 0%, var(--bg) 55%);
+    color: var(--text);
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh; padding: 48px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    width: 100%; max-width: 520px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  header {
+    padding: 26px 24px 18px;
+    background: linear-gradient(180deg, var(--surface-2), transparent);
+  }
+  .head-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  h1 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+  .date { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+  .progress-ring {
+    width: 52px; height: 52px; position: relative; flex-shrink: 0;
+  }
+  .progress-ring svg { transform: rotate(-90deg); }
+  .progress-ring .lbl {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: 11px; font-weight: 700; color: var(--text-dim);
+  }
+
+  .add { display: flex; gap: 8px; padding: 0 24px 18px; }
+  .add input {
+    flex: 1; background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 12px; padding: 13px 14px; font-size: 15px;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .add input::placeholder { color: var(--text-dim); }
+  .add input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .add button {
+    background: var(--accent); color: #fff; border: 0; border-radius: 12px;
+    width: 47px; font-size: 24px; line-height: 1; cursor: pointer;
+    transition: background .15s, transform .05s;
+    display: grid; place-items: center;
+  }
+  .add button:hover { background: var(--accent-2); }
+  .add button:active { transform: scale(.94); }
+
+  .filters { display: flex; gap: 6px; padding: 0 24px 14px; }
+  .filters button {
+    background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+    padding: 7px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    transition: all .15s;
+  }
+  .filters button:hover { border-color: var(--accent); color: var(--text); }
+  .filters button.active {
+    background: var(--accent-soft); border-color: var(--accent); color: var(--accent-2);
+    font-weight: 600;
+  }
+
+  ul.list { list-style: none; padding: 0 12px; max-height: 46vh; overflow-y: auto; }
+  ul.list::-webkit-scrollbar { width: 8px; }
+  ul.list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+
+  .task {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 12px; border-radius: var(--radius);
+    border-bottom: 1px solid var(--border);
+    animation: slideIn .25s ease;
+  }
+  .task:last-child { border-bottom: 0; }
+  .task:hover { background: var(--surface-2); }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(6px);} to { opacity:1; transform: none;} }
+
+  .check {
+    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--text-dim); cursor: pointer; display: grid; place-items: center;
+    transition: all .18s; background: transparent;
+  }
+  .check svg { width: 13px; height: 13px; opacity: 0; transition: opacity .15s; }
+  .task.done .check { background: var(--done); border-color: var(--done); }
+  .task.done .check svg { opacity: 1; }
+  .task .text {
+    flex: 1; font-size: 15px; line-height: 1.4; word-break: break-word;
+    transition: color .2s;
+  }
+  .task.done .text { color: var(--text-dim); text-decoration: line-through; }
+
+  .del {
+    background: transparent; border: 0; color: var(--text-dim); cursor: pointer;
+    font-size: 17px; padding: 6px 8px; border-radius: 8px; opacity: 0;
+    transition: all .15s;
+  }
+  .task:hover .del { opacity: 1; }
+  .del:hover { color: var(--danger); background: rgba(248,113,113,.12); }
+
+  .empty { text-align: center; padding: 48px 20px; color: var(--text-dim); }
+  .empty .ico { font-size: 40px; opacity: .5; margin-bottom: 10px; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text-dim);
+    background: var(--surface-2);
+  }
+  footer button {
+    background: transparent; border: 0; color: var(--text-dim); cursor: pointer;
+    font-size: 13px; padding: 4px 8px; border-radius: 6px; transition: all .15s;
+  }
+  footer button:hover { color: var(--danger); background: rgba(248,113,113,.1); }
+
+  .task.removing { animation: slideOut .2s ease forwards; }
+  @keyframes slideOut { to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; border: 0; } }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="head-row">
+        <div>
+          <h1>今日待辦</h1>
+          <div class="date" id="date"></div>
+        </div>
+        <div class="progress-ring" title="完成進度">
+          <svg width="52" height="52">
+            <circle cx="26" cy="26" r="22" fill="none" stroke="var(--border)" stroke-width="5"/>
+            <circle id="ring" cx="26" cy="26" r="22" fill="none" stroke="var(--accent)" stroke-width="5"
+                    stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+          </svg>
+          <span class="lbl" id="pct">0%</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="add">
+      <input id="inp" type="text" placeholder="加一件待辦事項…" autocomplete="off" maxlength="200">
+      <button id="addBtn" aria-label="加入">+</button>
+    </div>
+
+    <div class="filters" id="filters">
+      <button data-f="all" class="active">全部</button>
+      <button data-f="active">未完成</button>
+      <button data-f="done">已完成</button>
+    </div>
+
+    <ul class="list" id="list"></ul>
+
+    <footer>
+      <span id="count"></span>
+      <button id="clear">清除已完成</button>
+    </footer>
+  </div>
+
+<script>
+  const KEY = "hermes.todos.v1";
+  let tasks = load();
+  let filter = "all";
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch { return []; }
+  }
+  function save(){ localStorage.setItem(KEY, JSON.stringify(tasks)); }
+
+  const inp = document.getElementById("inp");
+  const list = document.getElementById("list");
+
+  document.getElementById("date").textContent =
+    new Date().toLocaleDateString("zh-HK", { year:"numeric", month:"long", day:"numeric", weekday:"long" });
+
+  document.getElementById("addBtn").onclick = addTask;
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
+
+  document.getElementById("filters").addEventListener("click", e => {
+    if (e.target.tagName !== "BUTTON") return;
+    filter = e.target.dataset.f;
+    document.querySelectorAll("#filters button").forEach(b => b.classList.toggle("active", b === e.target));
+    render();
+  });
+
+  document.getElementById("clear").onclick = () => {
+    tasks = tasks.filter(t => !t.done); save(); render();
+  };
+
+  function addTask(){
+    const text = inp.value.trim();
+    if (!text) return;
+    tasks.unshift({ id: Date.now() + Math.random().toString(36).slice(2), text, done: false });
+    inp.value = ""; inp.focus(); save(); render();
+  }
+
+  function toggle(id){
+    const t = tasks.find(t => t.id === id);
+    if (t) { t.done = !t.done; save(); render(); }
+  }
+
+  function remove(id){
+    const el = list.querySelector(`[data-id="${id}"]`);
+    if (el) {
+      el.classList.add("removing");
+      setTimeout(() => { tasks = tasks.filter(t => t.id !== id); save(); render(); }, 190);
+    } else {
+      tasks = tasks.filter(t => t.id !== id); save(); render();
+    }
+  }
+
+  const CHECK_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  function render(){
+    const visible = tasks.filter(t =>
+      filter === "all" ? true : filter === "active" ? !t.done : t.done);
+
+    if (visible.length === 0) {
+      list.innerHTML = `<div class="empty">
+        <div class="ico">${filter === "done" ? "✅" : "🗒️"}</div>
+        ${filter === "all" ? "仲無待辦，加一件開始" : filter === "active" ? "所有事項都搞掂" : "暫無已完成事項"}
+      </div>`;
+    } else {
+      list.innerHTML = visible.map(t => `
+        <li class="task ${t.done ? "done" : ""}" data-id="${t.id}">
+          <button class="check" data-act="toggle" aria-label="切換完成">${CHECK_SVG}</button>
+          <span class="text">${escapeHtml(t.text)}</span>
+          <button class="del" data-act="del" aria-label="刪除">✕</button>
+        </li>`).join("");
+    }
+
+    // progress + count
+    const total = tasks.length, done = tasks.filter(t => t.done).length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById("pct").textContent = pct + "%";
+    document.getElementById("ring").style.strokeDashoffset = (138.2 * (1 - pct/100)).toFixed(1);
+    const remaining = total - done;
+    document.getElementById("count").textContent =
+      total === 0 ? "無待辦事項" : `剩餘 ${remaining} 項未完成 · 共 ${total} 項`;
+  }
+
+  list.addEventListener("click", e => {
+    const li = e.target.closest(".task"); if (!li) return;
+    const id = li.dataset.id;
+    if (e.target.closest("[data-act=toggle]")) toggle(id);
+    else if (e.target.closest("[data-act=del]")) remove(id);
+  });
+
+  function escapeHtml(s){
+    const d = document.createElement("div"); d.textContent = s; return d.innerHTML;
+  }
+
+  render();
+</script>
+</body>
+</html>
